@@ -2,10 +2,12 @@ version: '3.6'
 services:
   kong:
     container_name: supabase-kong
-    build:
-      context: ./dockerfiles/kong
+    image: kong:2.1
+    secrets:
+      - kong.yml
     environment:
-      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /run/secrets/kong.yml
       KONG_PLUGINS: request-transformer,cors,key-auth,http-log
     ports:
       - ${KONG_PORT}:8000/tcp
@@ -86,3 +88,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_PORT: ${POSTGRES_PORT}
+secrets:
+  kong.yml:
+    file: ./kong/kong.yml
